@@ -1,1 +1,1 @@
-{"virtualbox":{"/var/www/html/":{"guestpath":"/var/www/html","hostpath":"/Users/mikeldiez/Desktop/20_21/Despliege/lab/lab_vagrant/html","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/mikeldiez/Desktop/20_21/Despliege/lab/lab_vagrant","disabled":false,"__vagrantfile":true}}}
+{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/mikeldiez/Desktop/20_21/Despliege/lab/lab_vagrant","disabled":false,"__vagrantfile":true}}}

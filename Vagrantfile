@@ -12,11 +12,11 @@ Vagrant.configure("2") do |config|
     vm1.vm.box = "debian/contrib-jessie64"
 
     # config.vm.network "forwarded_port", guest: 80, host: 8080
-    # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
     vm1.vm.network "private_network", ip: "192.168.33.10"
     # config.vm.network "public_network"
 
-    vm1.vm.synced_folder "./html", "/var/www/html/"
+    #vm1.vm.synced_folder "./html", "/var/www/html/"
 
     # Provider-specific configuration so you can fine-tune various
     # backing providers for Vagrant. These expose provider-specific options.
@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     #   # Display the VirtualBox GUI when booting the machine
       vb.name = "debian1-Server"
       vb.gui = false
-      vb.memory = "512"
+      vb.memory = "2048"
     end
     #
 #    vm1.vm.provision "shell", inline: <<-SHELL
