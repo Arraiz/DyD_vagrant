@@ -233,6 +233,41 @@ Vagrant.configure("2") do |config|
 
   end
 
+  # GIT REPO
+
+  config.vm.define "gitserver" do |vm5|
+
+    vm5.vm.hostname = "host"
+    vm5.vm.box = "debian/contrib-jessie64"
+
+    #vm5.vm.network "forwarded_port", guest: 80, host: 8080
+    # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    vm5.vm.network "private_network", ip: "192.168.33.50"
+    # config.vm.network "public_network"
+
+    # Provider-specific configuration so you can fine-tune various
+    # backing providers for Vagrant. These expose provider-specific options.
+    # Example for VirtualBox:
+    #
+    vm5.vm.provider "virtualbox" do |vb|
+    #   # Display the VirtualBox GUI when booting the machine
+      vb.name = "host"
+      vb.gui = true
+      vb.memory = "512"
+    end
+
+    vm5.vm.provision "shell", run: "always", inline: <<-SHELL
+      echo "Hello from host"
+    SHELL
+
+    vm5.vm.provision "shell", path: "git-server-setup.sh"
+
+    
+
+
+  end
+
+
   # HOST
   # config.vm.define "host" do |vm5|
   #   vm5.vm.hostname = "host"
