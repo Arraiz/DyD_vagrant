@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
       echo "Hello from dev.akme.eus"
     SHELL
 
-    vm1.vm.provision "shell", path: "script.sh"
+    vm1.vm.provision "shell", path: "server1.sh"
 
 
     vm1.vm.provision "file", 
@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
       echo "Hello from test.akme.eus"
     SHELL
 
-    vm2.vm.provision "shell", path: "script.sh"
+    vm2.vm.provision "shell", path: "server1.sh"
 
 
     vm2.vm.provision "file", 
@@ -138,7 +138,7 @@ Vagrant.configure("2") do |config|
       echo "Hello from www.akme.eus"
     SHELL
 
-    vm3.vm.provision "shell", path: "script.sh"
+    vm3.vm.provision "shell", path: "server1.sh"
 
 
     vm3.vm.provision "file", 
@@ -162,5 +162,109 @@ Vagrant.configure("2") do |config|
       systemctl reload apache2
     SHELL
   end
+
+  # DNS server
+  config.vm.define "dns" do |vm4|
+    vm4.vm.hostname = "dns"
+    vm4.vm.box = "debian/contrib-jessie64"
+
+    #vm1.vm.network "forwarded_port", guest: 80, host: 8080
+    # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    vm4.vm.network "private_network", ip: "192.168.33.40"
+    # config.vm.network "public_network"
+
+    # Provider-specific configuration so you can fine-tune various
+    # backing providers for Vagrant. These expose provider-specific options.
+    # Example for VirtualBox:
+    #
+    vm4.vm.provider "virtualbox" do |vb|
+    #   # Display the VirtualBox GUI when booting the machine
+      vb.name = "dns"
+      vb.gui = false
+      vb.memory = "512"
+    end
+
+    vm4.vm.provision "shell", run: "always", inline: <<-SHELL
+      echo "Hello from DNS server"
+    SHELL
+
+    vm4.vm.provision "shell", path: "server2.sh"
+
+    vm4.vm.provision "file", 
+      source: "./dns/named.conf.options", 
+      destination: "/tmp/named.conf.options"
+
+    vm4.vm.provision "shell",
+      inline: "mv /tmp/named.conf.options /etc/bind/named.conf.options"
+
+
+    vm4.vm.provision "file", 
+      source: "./dns/named.conf.local", 
+      destination: "/tmp/named.conf.local"
+
+    vm4.vm.provision "shell",
+      inline: "mv /tmp/named.conf.local /etc/bind/named.conf.local"
+
+    vm4.vm.provision "file", 
+      source: "./dns/db.akme.eus", 
+      destination: "/tmp/db.akme.eus"  
+
+    vm4.vm.provision "shell",
+      inline: "mv /tmp/db.akme.eus /etc/bind/db.akme.eus"
+
+    vm4.vm.provision "file", 
+      source: "./dns/db.192.168.33", 
+      destination: "/tmp/db.192.168.33"
+
+     vm4.vm.provision "shell",
+      inline: "mv /tmp/db.192.168.33 /etc/bind/db.192.168.33"
+
+    vm4.vm.provision "shell",
+      inline: "named-checkconf"
+
+    vm4.vm.provision "shell",
+      inline: "named-checkzone akme.eus /etc/bind/db.akme.eus"
+   
+    vm4.vm.provision "shell",
+      inline: "named-checkzone 33.168.192.in-addr.arpa /etc/bind/db.192.168.33"
+
+    vm4.vm.provision "shell",
+      inline: "systemctl restart bind9"
+
+  end
+
+  # HOST
+  # config.vm.define "host" do |vm5|
+  #   vm5.vm.hostname = "host"
+  #   vm5.vm.box = "4linux/debian9-desktop"
+
+  #   #vm5.vm.network "forwarded_port", guest: 80, host: 8080
+  #   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+  #   vm5.vm.network "private_network", ip: "192.168.33.50"
+  #   # config.vm.network "public_network"
+
+  #   # Provider-specific configuration so you can fine-tune various
+  #   # backing providers for Vagrant. These expose provider-specific options.
+  #   # Example for VirtualBox:
+  #   #
+  #   vm5.vm.provider "virtualbox" do |vb|
+  #   #   # Display the VirtualBox GUI when booting the machine
+  #     vb.name = "host"
+  #     vb.gui = true
+  #     vb.memory = "512"
+  #   end
+
+  #   vm5.vm.provision "shell", run: "always", inline: <<-SHELL
+  #     echo "Hello from host"
+  #   SHELL
+
+  #   vm5.vm.provision "file", 
+  #     source: "./host/resolv.conf", 
+  #     destination: "/tmp/resolv.conf"
+
+  #   vm5.vm.provision "shell",
+  #     inline: "mv /tmp/resolv.conf /etc/resolv.conf"
+
+  # end
 
 end
