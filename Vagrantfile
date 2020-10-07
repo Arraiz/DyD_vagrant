@@ -5,6 +5,17 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
+
+# aduser en servidor git
+# ssh-keygen --> generar clave RSA en cliente con ssh-copy-id
+
+#wp-cli 
+#todos los usuarios en todos los departamentos
+#para los repos
+#git init --bare <nombre_del_repo>
+#users 
+
 Vagrant.configure("2") do |config|
 
   # DEV.AKME.EUS
@@ -12,8 +23,9 @@ Vagrant.configure("2") do |config|
     vm1.vm.hostname = "dev.akme.eus"
     vm1.vm.box = "debian/contrib-jessie64"
 
-    #vm1.vm.network "forwarded_port", guest: 80, host: 8080
+    
     # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    vm1.vm.network "forwarded_port", guest: 80, host: 8080
     vm1.vm.network "private_network", ip: "192.168.33.10"
     # config.vm.network "public_network"
 
@@ -34,7 +46,7 @@ Vagrant.configure("2") do |config|
       echo "Hello from dev.akme.eus"
     SHELL
 
-    vm1.vm.provision "shell", path: "server1.sh"
+    #vm1.vm.provision "shell", path: "server1.sh"
 
 
     vm1.vm.provision "file", 
@@ -84,6 +96,8 @@ Vagrant.configure("2") do |config|
 
     vm2.vm.provision "shell", run: "always", inline: <<-SHELL
       echo "Hello from test.akme.eus"
+      #generte rsa key
+      cat /dev/zero | ssh-keygen -q -N "" -C "test"
     SHELL
 
     vm2.vm.provision "shell", path: "server1.sh"
@@ -116,7 +130,7 @@ Vagrant.configure("2") do |config|
     vm3.vm.hostname = "www.akme.eus"
     vm3.vm.box = "debian/contrib-jessie64"
 
-    vm3.vm.network "forwarded_port", guest: 80, host: 8080
+    #vm3.vm.network "forwarded_port", guest: 80, host: 8080
     #vm3.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
     vm3.vm.network "private_network", ip: "192.168.33.30"
     # config.vm.network "public_network"
@@ -237,12 +251,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "gitserver" do |vm5|
 
-    vm5.vm.hostname = "host"
+    vm5.vm.hostname = "gitserver"
     vm5.vm.box = "debian/contrib-jessie64"
 
     #vm5.vm.network "forwarded_port", guest: 80, host: 8080
     # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    vm5.vm.network "private_network", ip: "192.168.33.50"
+    vm5.vm.network "private_network", ip: "192.168.33.60"
     # config.vm.network "public_network"
 
     # Provider-specific configuration so you can fine-tune various
@@ -251,20 +265,18 @@ Vagrant.configure("2") do |config|
     #
     vm5.vm.provider "virtualbox" do |vb|
     #   # Display the VirtualBox GUI when booting the machine
-      vb.name = "host"
-      vb.gui = true
+      vb.name = "gitserver"
+      vb.gui = false
       vb.memory = "512"
     end
 
     vm5.vm.provision "shell", run: "always", inline: <<-SHELL
-      echo "Hello from host"
+      echo "Hello from gitserver"
     SHELL
 
     vm5.vm.provision "shell", path: "git-server-setup.sh"
 
     
-
-
   end
 
 
