@@ -20,7 +20,6 @@ echo "utest:utest" | sudo chpasswd
 
 sudo adduser ues --disabled-password 
 echo "ues:ues" | sudo chpasswd
-#rf -rf /.ssh/vagrant/know_hots/
 
 #add to sudduers file
 usermod -aG sudo udev

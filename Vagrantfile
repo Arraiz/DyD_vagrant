@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
     SHELL
 
     vm5.vm.provision "shell", path: "git-server-setup.sh"
-    #vm5.vm.provision "shell",privileged: false, path: "create-repos.sh"
+
   end
 
 
@@ -76,7 +76,7 @@ Vagrant.configure("2") do |config|
       echo "Hello from dev.akme.eus"
     SHELL
 
-    #vm1.vm.provision "shell", path: "server1.sh"
+    vm1.vm.provision "shell", path: "server1.sh"
 
 
     vm1.vm.provision "file", 
@@ -126,19 +126,8 @@ Vagrant.configure("2") do |config|
 
     vm2.vm.provision "shell", run: "always", inline: <<-SHELL
       echo "Hello from test.akme.eus"
-      rm -rf /home/vagrant/.ssh/id_rsa /home/vagrant/.ssh/id_rsa.pub
-      #generte rsa key
-      #cat /dev/zero | ssh-keygen -q -N ""
-      #ssh-copy-id utest@192.168.33.60
     SHELL
-
-    vm2.vm.provision "shell",privileged:false ,run: "always", inline: <<-SHELL
-     
-      #generte rsa key
-      ssh-keygen -b 2048 -t rsa -f /home/vagrant/.ssh/id_rsa -q -N ""
-      ssh-copy-id utest@192.168.33.60
-    SHELL
-
+    
     vm2.vm.provision "shell", path: "server1.sh"
 
 
@@ -286,40 +275,5 @@ Vagrant.configure("2") do |config|
 
   end
 
-  # GIT REPO
-
-  # HOST
-  # config.vm.define "host" do |vm5|
-  #   vm5.vm.hostname = "host"
-  #   vm5.vm.box = "4linux/debian9-desktop"
-
-  #   #vm5.vm.network "forwarded_port", guest: 80, host: 8080
-  #   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-  #   vm5.vm.network "private_network", ip: "192.168.33.50"
-  #   # config.vm.network "public_network"
-
-  #   # Provider-specific configuration so you can fine-tune various
-  #   # backing providers for Vagrant. These expose provider-specific options.
-  #   # Example for VirtualBox:
-  #   #
-  #   vm5.vm.provider "virtualbox" do |vb|
-  #   #   # Display the VirtualBox GUI when booting the machine
-  #     vb.name = "host"
-  #     vb.gui = true
-  #     vb.memory = "512"
-  #   end
-
-  #   vm5.vm.provision "shell", run: "always", inline: <<-SHELL
-  #     echo "Hello from host"
-  #   SHELL
-
-  #   vm5.vm.provision "file", 
-  #     source: "./host/resolv.conf", 
-  #     destination: "/tmp/resolv.conf"
-
-  #   vm5.vm.provision "shell",
-  #     inline: "mv /tmp/resolv.conf /etc/resolv.conf"
-
-  # end
 
 end
