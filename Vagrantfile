@@ -18,6 +18,36 @@
 
 Vagrant.configure("2") do |config|
 
+ config.vm.define "gitserver" do |vm5|
+
+    vm5.vm.hostname = "gitserver"
+    vm5.vm.box = "debian/contrib-jessie64"
+
+    #vm5.vm.network "forwarded_port", guest: 80, host: 8080
+    # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    vm5.vm.network "private_network", ip: "192.168.33.60"
+    # config.vm.network "public_network"
+
+    # Provider-specific configuration so you can fine-tune various
+    # backing providers for Vagrant. These expose provider-specific options.
+    # Example for VirtualBox:
+    #
+    vm5.vm.provider "virtualbox" do |vb|
+    #   # Display the VirtualBox GUI when booting the machine
+      vb.name = "gitserver"
+      vb.gui = false
+      vb.memory = "512"
+    end
+
+    vm5.vm.provision "shell", run: "always", inline: <<-SHELL
+      echo "Hello from gitserver"
+    SHELL
+
+    vm5.vm.provision "shell", path: "git-server-setup.sh"
+    #vm5.vm.provision "shell",privileged: false, path: "create-repos.sh"
+  end
+
+
   # DEV.AKME.EUS
   config.vm.define "dev.akme.eus" do |vm1|
     vm1.vm.hostname = "dev.akme.eus"
@@ -96,8 +126,17 @@ Vagrant.configure("2") do |config|
 
     vm2.vm.provision "shell", run: "always", inline: <<-SHELL
       echo "Hello from test.akme.eus"
+      rm -rf /home/vagrant/.ssh/id_rsa /home/vagrant/.ssh/id_rsa.pub
       #generte rsa key
-      cat /dev/zero | ssh-keygen -q -N "" -C "test"
+      #cat /dev/zero | ssh-keygen -q -N ""
+      #ssh-copy-id utest@192.168.33.60
+    SHELL
+
+    vm2.vm.provision "shell",privileged:false ,run: "always", inline: <<-SHELL
+     
+      #generte rsa key
+      ssh-keygen -b 2048 -t rsa -f /home/vagrant/.ssh/id_rsa -q -N ""
+      ssh-copy-id utest@192.168.33.60
     SHELL
 
     vm2.vm.provision "shell", path: "server1.sh"
@@ -248,52 +287,6 @@ Vagrant.configure("2") do |config|
   end
 
   # GIT REPO
-
-  config.vm.define "gitserver" do |vm5|
-
-    vm5.vm.hostname = "gitserver"
-    vm5.vm.box = "debian/contrib-jessie64"
-
-    #vm5.vm.network "forwarded_port", guest: 80, host: 8080
-    # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    vm5.vm.network "private_network", ip: "192.168.33.60"
-    # config.vm.network "public_network"
-
-    # Provider-specific configuration so you can fine-tune various
-    # backing providers for Vagrant. These expose provider-specific options.
-    # Example for VirtualBox:
-    #
-    vm5.vm.provider "virtualbox" do |vb|
-    #   # Display the VirtualBox GUI when booting the machine
-      vb.name = "gitserver"
-      vb.gui = false
-      vb.memory = "512"
-    end
-
-    vm5.vm.provision "shell", run: "always", inline: <<-SHELL
-      echo "Hello from gitserver"
-    SHELL
-
-    vm5.vm.provision "shell", path: "git-server-setup.sh"
-    vm5.vm.provision "shell",privileged: false, path: "create-repos.sh"
-
-    #vm5.vm.provision "shell", privileged: false blablabla
-
-    #vm5.vm.provision "shell", run: "always", inline: <<-SHELL
-    #  su -l newuser -c "path to shell script"
-    #SHELL
-    
-    #sudo -u devops /bin/sh <<\DEVOPS_BLOCK
-    # Become devops user here
-    #id
-    #whoami
-    # Back to the root user here
-    #DEVOPS_BLOCK
-
-
-    
-  end
-
 
   # HOST
   # config.vm.define "host" do |vm5|

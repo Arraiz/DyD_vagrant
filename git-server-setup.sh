@@ -10,17 +10,17 @@ ssh-keygen -f id_rsa -t rsa -N ''
 
 
 
-sudo adduser dev --disabled-password 
-echo "dev:dev" | sudo chpasswd
+sudo adduser udev --disabled-password 
+echo "udev:udev" | sudo chpasswd
 
 
-sudo adduser test --disabled-password 
-echo "test:test" | sudo chpasswd
+sudo adduser utest --disabled-password 
+echo "utest:utest" | sudo chpasswd
 
 
-sudo adduser es --disabled-password 
-echo "es:es" | sudo chpasswd
-
+sudo adduser ues --disabled-password 
+echo "ues:ues" | sudo chpasswd
+#rf -rf /.ssh/vagrant/know_hots/
 
 #add to sudduers file
 usermod -aG sudo udev
@@ -31,9 +31,9 @@ git init --bare "/home/udev/udevrepo"
 git init --bare "/home/utest/utestrepo"
 git init --bare "/home/ues/uesrepo"
 
-chown -R dev "/home/udev/udevrepo/"
-chown -R test "/home/utest/utestrepo/"
-chown -R es "/home/ues/uesrepo/"
+chown -R udev "/home/udev/udevrepo/"
+chown -R utest "/home/utest/utestrepo/"
+chown -R ues "/home/ues/uesrepo/"
 
 chmod 704 "/home/udev/udevrepo/"
 chmod 704 "/home/utest/utestrepo/"
