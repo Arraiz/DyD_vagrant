@@ -275,6 +275,21 @@ Vagrant.configure("2") do |config|
     SHELL
 
     vm5.vm.provision "shell", path: "git-server-setup.sh"
+    vm5.vm.provision "shell",privileged: false, path: "create-repos.sh"
+
+    #vm5.vm.provision "shell", privileged: false blablabla
+
+    #vm5.vm.provision "shell", run: "always", inline: <<-SHELL
+    #  su -l newuser -c "path to shell script"
+    #SHELL
+    
+    #sudo -u devops /bin/sh <<\DEVOPS_BLOCK
+    # Become devops user here
+    #id
+    #whoami
+    # Back to the root user here
+    #DEVOPS_BLOCK
+
 
     
   end
